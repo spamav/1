@@ -1,0 +1,265 @@
+#include <stdio.h>
+
+#define MAX 20
+
+int queue[MAX], front = -1, rear = -1;
+int visited[MAX];
+
+void enqueue(int x) {
+    if (rear == MAX - 1) {
+        printf("Queue Overflow\n");
+        return;
+    }
+    if (front == -1)
+        front = 0;
+    queue[++rear] = x;
+}
+
+int dequeue() {
+    if (front == -1 || front > rear)
+        return -1;
+    return queue[front++];
+}
+
+void BFS(int adj[MAX][MAX], int n, int start) {
+    int i, current;
+
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+
+    enqueue(start);
+    visited[start] = 1;
+
+    printf("\nBFS Traversal: ");
+
+    while ((current = dequeue()) != -1) {
+        printf("%d ", current);
+
+        for (i = 0; i < n; i++) {
+            if (adj[current][i] == 1 && visited[i] == 0) {
+                enqueue(i);
+                visited[i] = 1;
+            }
+        }
+    }
+}
+
+int main() {
+    int n, adj[MAX][MAX];
+    int i, j, start;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("\nEnter adjacency matrix (%d x %d):\n", n, n);
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            scanf("%d", &adj[i][j]);
+        }
+    }
+
+    /* Display the matrix nicely */
+    printf("\nEntered Matrix:\n");
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            printf("%d ", adj[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nEnter starting vertex (0 to %d): ", n - 1);
+    scanf("%d", &start);
+
+    if (start < 0 || start >= n) {
+        printf("Invalid start vertex.\n");
+        return 0;
+    }
+
+    BFS(adj, n, start);
+
+    return 0;
+}
+
+
+                                 // BFS ENDS HERE 
+
+
+
+                            /// STACK USING LL AND ARRAY START HERE 
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+/************* STACK USING ARRAY *************/
+int stackArray[MAX];
+int topA = -1;
+
+void pushArray(int x) {
+    if (topA == MAX - 1) {
+        printf("Stack Overflow\n");
+        return;
+    }
+    topA++;
+    stackArray[topA] = x;
+}
+
+int popArray() {
+    if (topA == -1) {
+        printf("Stack Underflow\n");
+        return -1;
+    }
+    return stackArray[topA--];
+}
+
+void displayArray() {
+    if (topA == -1) {
+        printf("Stack is empty\n");
+        return;
+    }
+    printf("Stack elements (Array): ");
+    for (int i = topA; i >= 0; i--)
+        printf("%d ", stackArray[i]);
+    printf("\n");
+}
+
+/************* STACK USING LINKED LIST *************/
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *topL = NULL;
+
+void pushList(int x) {
+    struct Node *newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+    newNode->data = x;
+    newNode->next = topL;
+    topL = newNode;
+}
+
+int popList() {
+    if (topL == NULL) {
+        printf("Stack Underflow\n");
+        return -1;
+    }
+    struct Node *temp = topL;
+    int value = temp->data;
+    topL = topL->next;
+    free(temp);
+    return value;
+}
+
+void displayList() {
+    struct Node *temp = topL;
+    if (temp == NULL) {
+        printf("Stack is empty\n");
+        return;
+    }
+    printf("Stack elements (Linked List): ");
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+/************* MAIN MENU *************/
+int main() {
+    int mainChoice, choice, value;
+
+    while (1) {
+        printf("\n========== MAIN MENU ==========\n");
+        printf("1. Stack Using Array\n");
+        printf("2. Stack Using Linked List\n");
+        printf("3. Exit\n");
+        printf("Choose option: ");
+        scanf("%d", &mainChoice);
+
+        if (mainChoice == 3)
+            break;
+
+        switch (mainChoice) {
+
+            /*********** ARRAY STACK MENU ***********/
+            case 1:
+                while (1) {
+                    printf("\n--- Stack Using Array ---\n");
+                    printf("1. Push\n2. Pop\n3. Display\n4. Back to Main Menu\n");
+                    printf("Enter your choice: ");
+                    scanf("%d", &choice);
+
+                    if (choice == 4) break;
+
+                    switch (choice) {
+                        case 1:
+                            printf("Enter value to push: ");
+                            scanf("%d", &value);
+                            pushArray(value);
+                            break;
+
+                        case 2:
+                            value = popArray();
+                            if (value != -1)
+                                printf("Popped: %d\n", value);
+                            break;
+
+                        case 3:
+                            displayArray();
+                            break;
+
+                        default:
+                            printf("Invalid choice\n");
+                    }
+                }
+                break;
+
+            /*********** LINKED LIST STACK MENU ***********/
+            case 2:
+                while (1) {
+                    printf("\n--- Stack Using Linked List ---\n");
+                    printf("1. Push\n2. Pop\n3. Display\n4. Back to Main Menu\n");
+                    printf("Enter your choice: ");
+                    scanf("%d", &choice);
+
+                    if (choice == 4) break;
+
+                    switch (choice) {
+                        case 1:
+                            printf("Enter value to push: ");
+                            scanf("%d", &value);
+                            pushList(value);
+                            break;
+
+                        case 2:
+                            value = popList();
+                            if (value != -1)
+                                printf("Popped: %d\n", value);
+                            break;
+
+                        case 3:
+                            displayList();
+                            break;
+
+                        default:
+                            printf("Invalid choice\n");
+                    }
+                }
+                break;
+
+            default:
+                printf("Invalid Option\n");
+        }
+    }
+    return 0;
+}
+
+
+
+
+
