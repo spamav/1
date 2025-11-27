@@ -1,3 +1,9 @@
+sites : https://sites.google.com/view/spamavanthi/home
+github : https://github.com/spamav/1
+gdrive :https://drive.google.com/drive/folders/1vYtQ3wXk_gZzgSoeKo8LIrJLta1bLxTn?usp=drive_link
+
+
+
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
