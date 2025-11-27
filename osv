@@ -1,0 +1,194 @@
+ BANKERS ALGORITHM 
+
+
+#include <stdio.h>
+#include <conio.h>
+
+#define MAX_PROCESSES 10
+#define MAX_RESOURCES 10
+
+int main() {
+    int n, m; /* n = number of processes, m = number of resource types */
+    int allocation[MAX_PROCESSES][MAX_RESOURCES];
+    int max[MAX_PROCESSES][MAX_RESOURCES];
+    int need[MAX_PROCESSES][MAX_RESOURCES];
+    int available[MAX_RESOURCES];
+    int finish[MAX_PROCESSES];
+    int safeSeq[MAX_PROCESSES];
+    int i, j, k;
+
+    clrscr();
+    printf("Banker's Algorithm (Turbo C compatible C program)\n\n");
+    printf("Enter number of processes (<= %d): ", MAX_PROCESSES);
+    scanf("%d", &n);
+    printf("Enter number of resource types (<= %d): ", MAX_RESOURCES);
+    scanf("%d", &m);
+
+    printf("\nEnter Allocation matrix (rows = processes, columns = resources):\n");
+    for (i = 0; i < n; i++) {
+        printf("Process P%d allocation: ", i);
+        for (j = 0; j < m; j++) {
+            scanf("%d", &allocation[i][j]);
+        }
+    }
+
+    printf("\nEnter Max matrix (rows = processes, columns = resources):\n");
+    for (i = 0; i < n; i++) {
+        printf("Process P%d max: ", i);
+        for (j = 0; j < m; j++) {
+            scanf("%d", &max[i][j]);
+        }
+    }
+
+    printf("\nEnter Available vector (space separated %d values): ", m);
+    for (j = 0; j < m; j++) {
+        scanf("%d", &available[j]);
+    }
+
+    /* Calculate Need = Max - Allocation */
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < m; j++) {
+            need[i][j] = max[i][j] - allocation[i][j];
+        }
+    }
+
+    /* Initialize finish[] to false */
+    for (i = 0; i < n; i++) finish[i] = 0;
+
+    /* Safety algorithm to find safe sequence */
+    int count = 0;
+    while (count < n) {
+        int found = 0;
+        for (i = 0; i < n; i++) {
+            if (!finish[i]) {
+                int canAllocate = 1;
+                for (j = 0; j < m; j++) {
+                    if (need[i][j] > available[j]) {
+                        canAllocate = 0;
+                        break;
+                    }
+                }
+                if (canAllocate) {
+                    /* This process can be allocated, simulate its completion */
+                    for (k = 0; k < m; k++) {
+                        available[k] += allocation[i][k];
+                    }
+                    safeSeq[count++] = i;
+                    finish[i] = 1;
+                    found = 1;
+                }
+            }
+        }
+        if (!found) break; /* No process could be allocated in this loop -> unsafe */
+    }
+
+    if (count == n) {
+        printf("\nSystem is in a SAFE state.\nSafe sequence is: ");
+        for (i = 0; i < n; i++) {
+            printf("P%d", safeSeq[i]);
+            if (i != n-1) printf(" -> ");
+        }
+        printf("\n");
+    } else {
+        printf("\nSystem is NOT in a safe state (UNSAFE).\n");
+    }
+
+    printf("\nPress any key to exit...");
+    getch();
+    return 0;
+}
+
+
+
+
+                PRODUCER CONSUMER
+
+
+
+
+#include <stdio.h>
+#include <conio.h>
+
+#define BUFFER_SIZE 5
+
+int mutex = 1;
+int empty = BUFFER_SIZE;
+int full = 0;
+int buffer[BUFFER_SIZE];
+int in = 0, out = 0;
+
+void wait(int *s) {
+    while (*s <= 0);
+    (*s)--;
+}
+
+void signal(int *s) {
+    (*s)++;
+}
+
+void produce(int item) {
+    wait(&empty);
+    wait(&mutex);
+
+    buffer[in] = item;
+    printf("Produced %d at %d\n", item, in);
+    in = (in + 1) % BUFFER_SIZE;
+
+    signal(&mutex);
+    signal(&full);
+}
+
+void consume() {
+    int item;
+
+    wait(&full);
+    wait(&mutex);
+
+    item = buffer[out];
+    printf("Consumed %d from %d\n", item, out);
+    out = (out + 1) % BUFFER_SIZE;
+
+    signal(&mutex);
+    signal(&empty);
+}
+
+int main() {
+    int choice, item;
+
+    clrscr();
+
+    while (1) {
+        printf("\n1. Produce\n2. Consume\n3. Exit\nEnter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                if (empty == 0) {
+                    printf("Buffer is FULL!\n");
+                } else {
+                    printf("Enter item: ");
+                    scanf("%d", &item);
+                    produce(item);
+                }
+                break;
+
+            case 2:
+                if (full == 0) {
+                    printf("Buffer is EMPTY!\n");
+                } else {
+                    consume();
+                }
+                break;
+
+            case 3:
+                return 0;
+
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+
+    getch();
+    return 0;
+}
+
