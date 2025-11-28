@@ -92,6 +92,8 @@ void main()
 
     for(i = 0; i < np; i++)
     {
+
+
         tat[i] = wt[i] + bt[i];
         total_wt = total_wt + wt[i];
         total_tat = total_tat + tat[i];
@@ -112,3 +114,39 @@ void main()
     printf("Average turn around time is : %.2f\n",
            (float) total_tat / (float) np);
 }
+
+
+
+
+
+
+
+Output :
+
+Enter the number of processes: 5
+Enter the burst time and priority number of each process
+
+Burst time of Process[1]: 8
+Priority number of Process[1]: 0
+
+Burst time of Process[2]: 2
+Priority number of Process[2]: 5
+
+Burst time of Process[3]: 7
+Priority number of Process[3]: 1
+
+Burst time of Process[4]: 3
+Priority number of Process[4]: 6
+
+Burst time of Process[5]: 5
+Priority number of Process[5]: 8
+
+Process   BT   Priority   WT   TAT
+Process[5]  5    8        0     5
+Process[4]  3    6        5     8
+Process[2]  2    5        8     10
+Process[3]  7    1        10    17
+Process[1]  8    0        17    25
+
+Average wait time is : 8.00
+Average turn around time is : 13.00
